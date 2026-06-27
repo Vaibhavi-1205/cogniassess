@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Profile — CogniAssess</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0A0A0E;--surface:#0F0F16;--card:#14141E;--card2:#1A1A28;--gold:#C9A84C;--gold2:#E8C76A;--gold-dim:rgba(201,168,76,0.1);--gold-border:rgba(201,168,76,0.2);--text:#EDE8DC;--text-muted:#7A7A8E;--text-dim:#2E2E3E;--border:rgba(255,255,255,0.05);--border-gold:rgba(201,168,76,0.18);--success:#4ade80;--error:#f87171;--radius:10px;--radius-sm:6px;}
+body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh;display:flex;flex-direction:column}
+header{background:rgba(10,10,14,0.95);border-bottom:0.5px solid var(--border);backdrop-filter:blur(12px);position:sticky;top:0;z-index:100}
+.header-inner{max-width:1200px;margin:0 auto;padding:0 1.5rem;height:56px;display:flex;align-items:center;gap:2rem}
+.logo{font-family:'Cinzel',serif;font-size:1.1rem;font-weight:700;color:var(--gold);letter-spacing:0.1em}
+.header-nav{display:flex;gap:0.5rem;margin-left:auto;align-items:center}
+.h-nav-item{font-size:0.78rem;color:var(--text-muted);text-decoration:none;padding:5px 14px;border-radius:var(--radius-sm);letter-spacing:0.04em}
+.h-nav-item:hover{color:var(--gold)}
+.h-nav-item.active{color:var(--text);border-bottom:1.5px solid var(--gold)}
+.logout-btn{font-size:0.72rem;color:var(--error);text-decoration:none;padding:5px 12px;border:0.5px solid rgba(248,113,113,0.2);border-radius:var(--radius-sm)}
+main{max-width:800px;margin:0 auto;width:100%;padding:2rem 1.5rem 4rem;display:flex;flex-direction:column;gap:1.25rem}
+.sec-head{display:flex;align-items:center;gap:14px}
+.sec-title{font-family:'Cinzel',serif;font-size:0.7rem;font-weight:600;letter-spacing:0.22em;text-transform:uppercase;color:var(--gold);white-space:nowrap}
+.sec-diamond{width:5px;height:5px;background:var(--gold);transform:rotate(45deg);opacity:0.5;flex-shrink:0}
+.sec-line{flex:1;height:0.5px;background:linear-gradient(90deg,var(--gold-border),transparent)}
+
+/* PROFILE HEADER */
+.profile-header{background:var(--card);border:0.5px solid var(--border-gold);border-radius:var(--radius);padding:2rem;display:flex;align-items:center;gap:1.5rem;position:relative;overflow:hidden}
+.profile-header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 100% 0%,rgba(201,168,76,0.07),transparent 60%);pointer-events:none}
+.avatar-wrap{position:relative;flex-shrink:0}
+.avatar{width:90px;height:90px;border-radius:50%;background:var(--gold-dim);border:2.5px solid var(--gold-border);display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:2rem;font-weight:700;color:var(--gold);overflow:hidden;object-fit:cover}
+.avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.avatar-edit{position:absolute;bottom:0;right:0;width:26px;height:26px;border-radius:50%;background:var(--gold);border:2px solid var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:0.7rem}
+.profile-info{flex:1}
+.profile-name{font-family:'Cinzel',serif;font-size:1.4rem;font-weight:700;color:var(--text);letter-spacing:0.04em}
+.profile-email{font-size:0.8rem;color:var(--text-muted);margin-top:3px}
+.profile-rank{display:inline-flex;align-items:center;gap:6px;font-size:0.7rem;font-weight:600;padding:4px 12px;border-radius:20px;background:var(--gold-dim);color:var(--gold);border:0.5px solid var(--gold-border);margin-top:10px;letter-spacing:0.06em;text-transform:uppercase}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem}
+.stat-card{background:var(--card);border:0.5px solid var(--border);border-radius:var(--radius);padding:1rem 1.25rem;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1.5px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:0.35}
+.stat-label{font-size:0.6rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.14em;margin-bottom:5px}
+.stat-value{font-size:1.4rem;font-weight:700;color:var(--gold);font-family:'Cinzel',serif}
+.stat-sub{font-size:0.66rem;color:var(--text-muted);margin-top:2px}
+
+/* PHOTO UPLOAD */
+.upload-card{background:var(--card);border:0.5px solid var(--border);border-radius:var(--radius);padding:1.25rem}
+.upload-zone{border:1.5px dashed var(--border-gold);border-radius:var(--radius-sm);padding:1.5rem;text-align:center;cursor:pointer;transition:border-color 0.15s}
+.upload-zone:hover{border-color:var(--gold)}
+.upload-icon{font-size:2rem;margin-bottom:0.5rem}
+.upload-text{font-size:0.8rem;color:var(--text-muted);margin-bottom:0.75rem}
+.upload-text span{color:var(--gold)}
+.file-input{display:none}
+.btn{border:none;border-radius:var(--radius-sm);padding:9px 18px;font-size:0.75rem;font-weight:700;cursor:pointer;font-family:'Inter',inherit;letter-spacing:0.1em;text-transform:uppercase;transition:all 0.15s}
+.btn-gold{background:var(--gold);color:#0A0A0E}
+.btn-gold:hover{background:var(--gold2)}
+.btn-sm{padding:6px 14px;font-size:0.7rem}
+
+/* HISTORY */
+.history-card{background:var(--card);border:0.5px solid var(--border);border-radius:var(--radius);padding:1.25rem}
+table{width:100%;border-collapse:collapse;font-size:0.8rem}
+th{text-align:left;font-size:0.62rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.1em;padding:0 0 8px;border-bottom:0.5px solid var(--border)}
+td{padding:9px 0;border-bottom:0.5px solid var(--border);color:var(--text)}
+tr:last-child td{border-bottom:none}
+.score-val{font-weight:600;color:var(--gold);font-family:'Cinzel',serif}
+.empty{color:var(--text-dim);font-size:0.8rem;text-align:center;padding:1.5rem 0;font-style:italic}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-inner">
+    <div class="logo">CogniAssess</div>
+    <nav class="header-nav">
+      <a class="h-nav-item" href="/">Home</a>
+      <a class="h-nav-item" href="/dashboard">Dashboard</a>
+      <a class="h-nav-item active" href="/profile">Profile</a>
+      <a class="logout-btn" href="/logout">Logout</a>
+    </nav>
+  </div>
+</header>
+<main>
+  <div class="sec-head"><div class="sec-title">Seeker Profile</div><div class="sec-diamond"></div><div class="sec-line"></div></div>
+
+  <!-- PROFILE HEADER -->
+  <div class="profile-header">
+    <div class="avatar-wrap">
+      {% if user.profile_photo %}
+        <img class="avatar" src="/static/uploads/{{ user.profile_photo }}" alt="Profile"/>
+      {% else %}
+        <div class="avatar">{{ user.username[0].upper() }}</div>
+      {% endif %}
+      <label class="avatar-edit" for="quick-upload" title="Change photo">✎</label>
+    </div>
+    <div class="profile-info">
+      <div class="profile-name">{{ user.username }}</div>
+      <div class="profile-email">{{ user.email }}</div>
+      <div class="profile-rank">✦ Cognitive Seeker</div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  {% if streak %}
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-label">🔥 Current Streak</div><div class="stat-value">{{ streak.current_streak }}</div><div class="stat-sub">days</div></div>
+    <div class="stat-card"><div class="stat-label">🏅 Longest Streak</div><div class="stat-value">{{ streak.longest_streak }}</div><div class="stat-sub">days</div></div>
+    <div class="stat-card"><div class="stat-label">📊 Total Sessions</div><div class="stat-value">{{ streak.total_sessions }}</div><div class="stat-sub">completed</div></div>
+  </div>
+  {% endif %}
+
+  <!-- PHOTO UPLOAD -->
+  <div class="sec-head"><div class="sec-title">Profile Photo</div><div class="sec-diamond"></div><div class="sec-line"></div></div>
+  <div class="upload-card">
+    <form method="POST" enctype="multipart/form-data">
+      <div class="upload-zone" onclick="document.getElementById('photo-input').click()">
+        <div class="upload-icon">🖼️</div>
+        <div class="upload-text">Click to upload a photo<br><span>PNG, JPG, WEBP up to 5MB</span></div>
+        <input class="file-input" type="file" id="photo-input" name="photo" accept="image/*" onchange="this.form.submit()"/>
+        <input class="file-input" type="file" id="quick-upload" name="photo" accept="image/*" onchange="this.form.submit()"/>
+      </div>
+    </form>
+  </div>
+
+  <!-- RECENT SCORES -->
+  <div class="sec-head"><div class="sec-title">Recent Sessions</div><div class="sec-diamond"></div><div class="sec-line"></div></div>
+  <div class="history-card">
+    {% if scores %}
+    <table>
+      <thead><tr><th>Memory</th><th>Reaction</th><th>Attention</th><th>Overall</th><th>Date</th></tr></thead>
+      <tbody>
+        {% for s in scores %}
+        <tr>
+          <td>{{ s.memory_score or '—' }}/10</td>
+          <td>{{ s.reaction_time or '—' }}ms</td>
+          <td>{{ s.attention_score or '—' }}%</td>
+          <td class="score-val">{{ s.overall_score or '—' }}/100</td>
+          <td style="color:var(--text-muted);font-size:0.75rem">{{ s.created_at[:10] }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty">No sessions yet. Complete your first trial!</div>
+    {% endif %}
+  </div>
+</main>
+</body>
+</html>

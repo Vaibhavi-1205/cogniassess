@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Login — CogniAssess</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0A0A0E;--surface:#0F0F16;--card:#14141E;--gold:#C9A84C;--gold2:#E8C76A;--gold-dim:rgba(201,168,76,0.1);--gold-border:rgba(201,168,76,0.2);--text:#EDE8DC;--text-muted:#7A7A8E;--text-dim:#2E2E3E;--border:rgba(255,255,255,0.05);--border-gold:rgba(201,168,76,0.18);--error:#f87171;--success:#4ade80;--radius:10px;--radius-sm:6px;}
+body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1.5rem;position:relative;overflow:hidden;}
+.bg-glow{position:fixed;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(201,168,76,0.06) 0%,transparent 60%),radial-gradient(ellipse at 0% 100%,rgba(139,92,246,0.04) 0%,transparent 50%);pointer-events:none}
+.card{background:var(--card);border:0.5px solid var(--border-gold);border-radius:var(--radius);padding:2.5rem 2rem;width:100%;max-width:400px;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:0.5}
+.logo{font-family:'Cinzel',serif;font-size:1.2rem;font-weight:700;color:var(--gold);text-align:center;letter-spacing:0.1em;margin-bottom:0.25rem}
+.logo-sub{font-size:0.65rem;color:var(--text-muted);text-align:center;letter-spacing:0.2em;text-transform:uppercase;margin-bottom:2rem}
+.divider{display:flex;align-items:center;gap:10px;margin-bottom:2rem}
+.div-line{flex:1;height:0.5px;background:var(--border-gold);opacity:0.5}
+.div-diamond{width:5px;height:5px;background:var(--gold);transform:rotate(45deg);opacity:0.4;flex-shrink:0}
+.page-title{font-family:'Cinzel',serif;font-size:1rem;font-weight:600;color:var(--text);text-align:center;letter-spacing:0.08em;margin-bottom:1.5rem}
+.form-group{margin-bottom:1rem}
+.form-label{font-size:0.68rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.1em;display:block;margin-bottom:6px}
+.form-input{width:100%;background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;font-size:0.85rem;color:var(--text);font-family:'Inter',inherit;outline:none;transition:border-color 0.15s}
+.form-input:focus{border-color:var(--gold)}
+.form-input::placeholder{color:var(--text-dim)}
+.btn{width:100%;border:none;border-radius:var(--radius-sm);padding:11px;font-size:0.8rem;font-weight:700;cursor:pointer;font-family:'Inter',inherit;letter-spacing:0.1em;text-transform:uppercase;transition:all 0.15s;margin-top:0.5rem}
+.btn-gold{background:var(--gold);color:#0A0A0E}
+.btn-gold:hover{background:var(--gold2)}
+.links{display:flex;justify-content:space-between;margin-top:1.25rem}
+.link{font-size:0.75rem;color:var(--text-muted);text-decoration:none;transition:color 0.15s}
+.link:hover{color:var(--gold)}
+.alert{border-radius:var(--radius-sm);padding:10px 14px;font-size:0.8rem;margin-bottom:1rem;text-align:center}
+.alert-error{background:rgba(248,113,113,0.08);border:0.5px solid rgba(248,113,113,0.2);color:var(--error)}
+.alert-success{background:rgba(74,222,128,0.08);border:0.5px solid rgba(74,222,128,0.2);color:var(--success)}
+</style>
+</head>
+<body>
+<div class="bg-glow"></div>
+<div class="card">
+  <div class="logo">CogniAssess</div>
+  <div class="logo-sub">Arcane Intelligence</div>
+  <div class="divider"><div class="div-line"></div><div class="div-diamond"></div><div class="div-line"></div></div>
+  <div class="page-title">Enter the Sanctum</div>
+  {% if error %}<div class="alert alert-error">{{ error }}</div>{% endif %}
+  {% if success %}<div class="alert alert-success">{{ success }}</div>{% endif %}
+  <form method="POST">
+    <div class="form-group">
+      <label class="form-label">Username</label>
+      <input class="form-input" type="text" name="username" placeholder="Your seeker name" required/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input class="form-input" type="password" name="password" placeholder="Your secret key" required/>
+    </div>
+    <button class="btn btn-gold" type="submit">Login →</button>
+  </form>
+  <div class="links">
+    <a class="link" href="/register">Create account</a>
+  </div>
+</div>
+</body>
+</html>

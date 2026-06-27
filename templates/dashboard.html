@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Performance Grimoire — CogniAssess</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0A0A0E;--surface:#0F0F16;--card:#14141E;--card2:#1A1A28;
+  --gold:#C9A84C;--gold2:#E8C76A;--gold-dim:rgba(201,168,76,0.1);--gold-border:rgba(201,168,76,0.2);
+  --teal:#4ECDC4;--purple:#8B5CF6;
+  --text:#EDE8DC;--text-muted:#7A7A8E;--text-dim:#2E2E3E;
+  --border:rgba(255,255,255,0.05);--border-gold:rgba(201,168,76,0.18);
+  --success:#4ade80;--error:#f87171;
+  --success-dim:rgba(74,222,128,0.08);--error-dim:rgba(248,113,113,0.08);
+  --radius:10px;--radius-sm:6px;
+}
+body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh;display:flex;flex-direction:column}
+header{background:rgba(10,10,14,0.95);border-bottom:0.5px solid var(--border);backdrop-filter:blur(12px);position:sticky;top:0;z-index:100}
+.header-inner{max-width:1200px;margin:0 auto;padding:0 1.5rem;height:56px;display:flex;align-items:center;gap:2rem}
+.logo{font-family:'Cinzel',serif;font-size:1.1rem;font-weight:700;color:var(--gold);letter-spacing:0.1em}
+.header-nav{display:flex;gap:0.5rem;margin-left:auto}
+.h-nav-item{font-size:0.78rem;color:var(--text-muted);text-decoration:none;padding:5px 14px;border-radius:var(--radius-sm);letter-spacing:0.04em}
+.h-nav-item:hover{color:var(--gold)}
+.h-nav-item.active{color:var(--text);border-bottom:1.5px solid var(--gold)}
+.app{display:flex;max-width:1200px;margin:0 auto;width:100%;min-height:calc(100vh - 56px)}
+.sidebar{width:220px;flex-shrink:0;border-right:0.5px solid var(--border);padding:1.5rem 0.75rem;display:flex;flex-direction:column;gap:2px;position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto}
+.sidebar-section{font-size:0.6rem;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-dim);padding:0 0.75rem;margin:1rem 0 0.4rem}
+.s-item{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:var(--radius-sm);font-size:0.8rem;color:var(--text-muted);cursor:pointer;text-decoration:none;transition:all 0.15s}
+.s-item:hover{background:var(--card);color:var(--text)}
+.s-item.active{background:var(--gold-dim);color:var(--gold);border:0.5px solid var(--gold-border)}
+.s-icon{font-size:0.95rem;width:20px;text-align:center;flex-shrink:0}
+.sidebar-divider{height:0.5px;background:var(--border);margin:0.75rem 0}
+.sidebar-user{margin-top:auto;background:var(--card);border:0.5px solid var(--border);border-radius:var(--radius);padding:1rem;display:flex;align-items:center;gap:10px}
+.user-avatar{width:36px;height:36px;border-radius:50%;background:var(--gold-dim);border:1.5px solid var(--gold-border);display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:600;color:var(--gold);font-family:'Cinzel',serif;flex-shrink:0}
+.user-name{font-size:0.8rem;font-weight:500;color:var(--text)}
+.user-rank{font-size:0.65rem;color:var(--text-muted);margin-top:1px}
+main{flex:1;padding:1.75rem;display:flex;flex-direction:column;gap:1.25rem;min-width:0}
+
+/* PAGE HERO */
+.page-hero{background:var(--card);border:0.5px solid var(--border-gold);border-radius:var(--radius);padding:1.75rem 2rem;position:relative;overflow:hidden}
+.page-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 100% 0%,rgba(201,168,76,0.08),transparent 60%);pointer-events:none}
+.page-title{font-family:'Cinzel',serif;font-size:1.6rem;font-weight:700;letter-spacing:0.05em;color:var(--text)}
+.page-title span{color:var(--gold)}
+.page-sub{font-size:0.78rem;color:var(--text-muted);margin-top:4px;font-style:italic;letter-spacing:0.02em}
+
+/* USER BAR */
+.ubar{display:flex;align-items:center;gap:0.75rem;background:var(--card);border:0.5px solid var(--border);border-radius:var(--radius);padding:0.85rem 1.25rem}
+.ubar label{font-size:0.68rem;font-weight:600;color:var(--text-muted);white-space:nowrap;letter-spacing:0.1em;text-transform:uppercase}
+.ubar input{flex:1;background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:7px 12px;font-size:0.85rem;color:var(--text);font-family:'Inter',inherit;outline:none}
+.ubar input:focus{border-color:var(--gold)}
+.ubar input::placeholder{color:var(--text-dim)}
+.btn-load{background:var(--gold);color:#0A0A0E;border:none;border-radius:var(--radius-sm);padding:8px 18px;font-size:0.72rem;font-weight:700;cursor:pointer;font-family:'Inter',inherit;letter-spacing:0.1em;text-transform:uppercase}
+.btn-load:hover{background:var(--gold2)}
+
+/* SEC HEAD */
+.sec-head{display:flex;align-items:center;gap:14px}
+.sec-title{font-family:'Cinzel',serif;font-size:0.7rem;font-weight:600;letter-spacing:0.22em;text-transform:uppercase;color:var(--gold);white-space:nowrap}
+.sec-diamond{width:5px;height:5px;background:var(--gold);transform:rotate(45deg);opacity:0.5;flex-shrink:0}
+.sec-line{flex:1;height:0.5px;background:linear-gradient(90deg,var(--gold-border),transparent)}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:0.75rem}
+.stat-card{background:var(--card);border:0.5px solid var(--border);border-radius:var(--radius);padding:1rem 1.25rem;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1.5px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:0.35}
+.stat-label{font-size:0.6rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.14em;margin-bottom:6px}
+.stat-value{font-size:1.4rem;font-weight:700;color:var(--gold);font-family:'Cinzel',serif}
+.stat-sub{font-size:0.66rem;color:var(--text-muted);margin-top:3px}
+
+/* DIGITAL TWIN */
+.twin-card{background:linear-gradient(135deg,#0D0D1F 0%,#111128 100%);border:0.5px solid rgba(78,205,196,0.2);border-radius:var(--radius);padding:1.5rem;position:relative;overflow:hidden}
+.twin-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 0% 100%,rgba(78,205,196,0.07),transparent 60%),radial-gradient(ellipse at 100% 0%,rgba(139,92,246,0.05),transparent 50%);pointer-events:none}
+.twin-header{display:flex;align-items:center;gap:10px;margin-bottom:1.25rem}
+.twin-icon{font-size:1.4rem}
+.twin-title{font-family:'Cinzel',serif;font-size:0.95rem;font-weight:600;color:var(--text);letter-spacing:0.05em}
+.twin-sub{font-size:0.7rem;color:var(--text-muted);margin-top:2px}
+.twin-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:0.75rem;margin-bottom:1rem}
+.twin-metric{background:rgba(255,255,255,0.03);border:0.5px solid rgba(78,205,196,0.12);border-radius:var(--radius-sm);padding:0.9rem}
+.twin-metric-label{font-size:0.6rem;color:var(--teal);text-transform:uppercase;letter-spacing:0.12em;opacity:0.65}
+.twin-metric-value{font-size:1.4rem;font-weight:700;margin-top:5px;color:var(--gold);font-family:'Cinzel',serif}
+.twin-metric-sub{font-size:0.66rem;color:var(--text-muted);margin-top:2px}
+.twin-trend{display:inline-flex;align-items:center;gap:6px;font-size:0.75rem;padding:5px 14px;border-radius:20px;font-weight:600;letter-spacing:0.06em}
+.trend-improving{background:rgba(74,222,128,0.1);color:var(--success);border:0.5px solid rgba(74,222,128,0.2)}
+.trend-stable{background:var(--gold-dim);color:var(--gold);border:0.5px solid var(--gold-border)}
+.trend-declining{background:var(--error-dim);color:var(--error);border:0.5px solid rgba(248,113,113,0.2)}
+.twin-pending{font-size:0.82rem;color:var(--text-muted);text-align:center;padding:1.5rem 0;font-style:italic}
+
+/* GAMIFICATION */
+.gami-card{background:var(--card);border:0.5px solid var(--border);border-radius:var(--radius);padding:1.25rem}
+.gami-row{display:flex;gap:0.75rem;flex-wrap:wrap;margin-bottom:1.25rem}
+.gami-stat{background:var(--surface);border-radius:var(--radius-sm);border:0.5px solid var(--border);padding:0.9rem 1rem;flex:1;min-width:90px}
+.gami-stat-label{font-size:0.6rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.12em}
+.gami-stat-value{font-size:1.4rem;font-weight:700;color:var(--gold);margin-top:4px;font-family:'Cinzel',serif}
+.badges-wrap{display:flex;flex-wrap:wrap;gap:8px}
+.badge-item{display:flex;align-items:center;gap:8px;background:var(--surface);border:0.5px solid var(--border-gold);border-radius:var(--radius-sm);padding:8px 14px}
+.badge-icon{font-size:1.1rem}
+.badge-name{font-size:0.78rem;font-weight:600;color:var(--text)}
+.badge-desc{font-size:0.66rem;color:var(--text-muted)}
+.no-badges{font-size:0.8rem;color:var(--text-dim);font-style:italic}
+
+/* GRID */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:640px){.grid-2{grid-template-columns:1fr}}
+.card{background:var(--card);border:0.5px solid var(--border);border-radius:var(--radius);padding:1.25rem}
+.card-label{font-size:0.6rem;font-weight:700;color:var(--text-muted);margin-bottom:1rem;text-transform:uppercase;letter-spacing:0.14em}
+.chart-wrap{position:relative;height:185px}
+
+/* FATIGUE */
+.fatigue-card{background:var(--card);border:0.5px solid var(--border);border-radius:var(--radius);padding:1.25rem}
+.f-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:0.8rem}
+.f-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+
+/* PODIUM */
+.podium{display:flex;align-items:flex-end;justify-content:center;gap:1rem;margin-bottom:1.5rem;padding:0 0.5rem}
+.podium-place{display:flex;flex-direction:column;align-items:center;gap:6px}
+.podium-name{font-family:'Cinzel',serif;font-size:0.75rem;font-weight:600;color:var(--text);text-align:center;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.podium-score{font-size:0.65rem;color:var(--text-muted)}
+.podium-block{width:72px;display:flex;align-items:center;justify-content:center;border-radius:var(--radius-sm) var(--radius-sm) 0 0;font-family:'Cinzel',serif;font-size:1.1rem;font-weight:700}
+.p1{height:80px;background:linear-gradient(180deg,rgba(201,168,76,0.25),rgba(201,168,76,0.05));border:0.5px solid var(--gold-border);color:var(--gold)}
+.p2{height:58px;background:rgba(255,255,255,0.04);border:0.5px solid var(--border);color:var(--text-muted)}
+.p3{height:42px;background:rgba(205,127,50,0.1);border:0.5px solid rgba(205,127,50,0.2);color:#CD7F32}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:0.77rem}
+th{text-align:left;font-size:0.6rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.12em;padding:0 0 8px;border-bottom:0.5px solid var(--border)}
+td{padding:8px 0;border-bottom:0.5px solid var(--border);color:var(--text);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+.rank-cell{font-family:'Cinzel',serif;font-weight:700;color:var(--gold);width:28px}
+.empty{color:var(--text-dim);font-size:0.78rem;text-align:center;padding:2rem 0;font-style:italic}
+
+@media(max-width:800px){.sidebar{display:none}}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-inner">
+    <div class="logo">CogniAssess</div>
+    <nav class="header-nav">
+      <a class="h-nav-item" href="/">Home</a>
+      <a class="h-nav-item active" href="/dashboard">Dashboard</a>
+      <a class="h-nav-item" href="/profile">Profile</a>
+      <a href="/logout" style="font-size:0.72rem;color:var(--error);text-decoration:none;padding:5px 12px;border:0.5px solid rgba(248,113,113,0.2);border-radius:var(--radius-sm)">Logout</a>
+    </nav>
+  </div>
+</header>
+<div class="app">
+  <aside class="sidebar">
+    <div class="sidebar-section">Navigation</div>
+    <a class="s-item" href="/"><span class="s-icon">🏠</span>Home</a>
+    <a class="s-item active" href="/dashboard"><span class="s-icon">📊</span>Dashboard</a>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">Modules</div>
+    <a class="s-item" href="/dashboard"><span class="s-icon">🧬</span>Digital Twin</a>
+    <a class="s-item" href="/dashboard"><span class="s-icon">🏆</span>Leaderboard</a>
+    <a class="s-item" href="/dashboard"><span class="s-icon">🎖️</span>Achievements</a>
+    <a class="s-item" href="/profile"><span class="s-icon">👤</span>Profile</a>
+    <a class="s-item" href="/logout" style="color:var(--error)"><span class="s-icon">🚪</span>Logout</a>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-user">
+      {% if photo %}
+        <img src="/static/uploads/{{ photo }}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:1.5px solid var(--gold-border);flex-shrink:0"/>
+      {% else %}
+        <div class="user-avatar" id="user-avatar">{{ username[0].upper() if username else '?' }}</div>
+      {% endif %}
+      <div>
+        <div class="user-name" id="side-uname">{{ username or 'Seeker' }}</div>
+        <div class="user-rank" id="side-streak">Load data below</div>
+      </div>
+    </div>
+  </aside>
+  <main>
+    <div class="page-hero">
+      <div class="page-title">Performance <span>Grimoire</span></div>
+      <div class="page-sub">Chronicles of your cognitive ascension.</div>
+    </div>
+
+    <div class="ubar">
+      <label>Seeker Name</label>
+      <input id="dash-username" type="text" value="{{ username or '' }}" placeholder="Enter your seeker name"/>
+      <button class="btn-load" onclick="loadUserData()">Load My Data</button>
+    </div>
+
+    <div class="sec-head"><div class="sec-title">Global Stats</div><div class="sec-diamond"></div><div class="sec-line"></div></div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-label">Sessions</div><div class="stat-value" id="s-total">—</div><div class="stat-sub">recorded</div></div>
+      <div class="stat-card"><div class="stat-label">Avg Memory</div><div class="stat-value" id="s-memory">—</div><div class="stat-sub">out of 10</div></div>
+      <div class="stat-card"><div class="stat-label">Avg Reaction</div><div class="stat-value" id="s-reaction">—</div><div class="stat-sub">ms</div></div>
+      <div class="stat-card"><div class="stat-label">Avg Attention</div><div class="stat-value" id="s-attention">—</div><div class="stat-sub">accuracy</div></div>
+      <div class="stat-card"><div class="stat-label">Best Score</div><div class="stat-value" id="s-best">—</div><div class="stat-sub">overall</div></div>
+    </div>
+
+    <div class="sec-head"><div class="sec-title">Digital Twin</div><div class="sec-diamond"></div><div class="sec-line"></div></div>
+    <div class="twin-card">
+      <div class="twin-header"><span class="twin-icon">🧬</span><div><div class="twin-title">Your Cognitive Twin</div><div class="twin-sub">Predicted performance based on your last 5 sessions</div></div></div>
+      <div id="twin-content"><div class="twin-pending">Enter your name above and click "Load My Data" to activate your Digital Twin.</div></div>
+    </div>
+
+    <div class="sec-head"><div class="sec-title">Streaks & Badges</div><div class="sec-diamond"></div><div class="sec-line"></div></div>
+    <div class="gami-card">
+      <div class="gami-row">
+        <div class="gami-stat"><div class="gami-stat-label">🔥 Streak</div><div class="gami-stat-value" id="g-streak">—</div></div>
+        <div class="gami-stat"><div class="gami-stat-label">🏅 Longest</div><div class="gami-stat-value" id="g-longest">—</div></div>
+        <div class="gami-stat"><div class="gami-stat-label">📊 Sessions</div><div class="gami-stat-value" id="g-total">—</div></div>
+      </div>
+      <div class="badges-wrap" id="badges-grid"><div class="no-badges">Load your data to see earned badges.</div></div>
+    </div>
+
+    <div class="sec-head"><div class="sec-title">Performance Charts</div><div class="sec-diamond"></div><div class="sec-line"></div></div>
+    <div class="grid-2">
+      <div class="card"><div class="card-label">Score Trend</div><div class="chart-wrap"><canvas id="chart-trend"></canvas></div></div>
+      <div class="card"><div class="card-label">Skill Breakdown</div><div class="chart-wrap"><canvas id="chart-radar"></canvas></div></div>
+    </div>
+
+    <div class="sec-head"><div class="sec-title">Fatigue Detection</div><div class="sec-diamond"></div><div class="sec-line"></div></div>
+    <div class="fatigue-card"><div id="fatigue-output"><div class="empty">Load your data to see fatigue analysis.</div></div></div>
+
+    <div class="sec-head"><div class="sec-title">Hall of Fate</div><div class="sec-diamond"></div><div class="sec-line"></div></div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-label">Leaderboard</div>
+        <div id="podium-wrap"></div>
+        <div id="leaderboard-wrap"><div class="empty">No scores yet.</div></div>
+      </div>
+      <div class="card">
+        <div class="card-label">Neural Logs</div>
+        <div id="history-wrap"><div class="empty">No sessions yet.</div></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+const GOLD='#C9A84C',TEAL='#4ECDC4';
+const gridColor='rgba(255,255,255,0.05)',tickColor='#7A7A8E';
+Chart.defaults.font.family="'Inter',system-ui,sans-serif";
+Chart.defaults.font.size=11;
+Chart.defaults.color=tickColor;
+let trendChart,radarChart;
+
+async function loadAll(){
+  const[stats,lb,hist]=await Promise.all([
+    fetch('/api/stats').then(r=>r.json()),
+    fetch('/api/leaderboard').then(r=>r.json()),
+    fetch('/api/history').then(r=>r.json())
+  ]);
+  document.getElementById('s-total').textContent=stats.total_sessions??'—';
+  document.getElementById('s-memory').textContent=stats.avg_memory??'—';
+  document.getElementById('s-reaction').textContent=stats.avg_reaction?stats.avg_reaction+'ms':'—';
+  document.getElementById('s-attention').textContent=stats.avg_attention?stats.avg_attention+'%':'—';
+  document.getElementById('s-best').textContent=stats.best_score??'—';
+
+  if(lb.length){
+    const top3=lb.slice(0,3);
+    let podiumHTML='<div class="podium">';
+    if(top3.length>=2)podiumHTML+=`<div class="podium-place"><div class="podium-name">${top3[1].username}</div><div class="podium-score">${top3[1].overall_score}/100</div><div class="podium-block p2">2</div></div>`;
+    podiumHTML+=`<div class="podium-place"><div class="podium-name">${top3[0].username}</div><div class="podium-score">${top3[0].overall_score}/100</div><div class="podium-block p1">1</div></div>`;
+    if(top3.length>=3)podiumHTML+=`<div class="podium-place"><div class="podium-name">${top3[2].username}</div><div class="podium-score">${top3[2].overall_score}/100</div><div class="podium-block p3">3</div></div>`;
+    podiumHTML+='</div>';
+    document.getElementById('podium-wrap').innerHTML=podiumHTML;
+    document.getElementById('leaderboard-wrap').innerHTML=`<table><thead><tr><th>#</th><th>Seeker</th><th>Score</th></tr></thead><tbody>${lb.map((r,i)=>`<tr><td class="rank-cell">${i+1}</td><td>${r.username}</td><td style="color:var(--gold);font-weight:600">${r.overall_score}/100</td></tr>`).join('')}</tbody></table>`;
+  }
+  if(hist.length){
+    document.getElementById('history-wrap').innerHTML=`<table><thead><tr><th>Seeker</th><th>Mem</th><th>React</th><th>Attn</th></tr></thead><tbody>${hist.slice(0,8).map(r=>`<tr><td>${r.username}</td><td>${r.memory_score??'—'}</td><td>${r.reaction_time?r.reaction_time+'ms':'—'}</td><td>${r.attention_score?r.attention_score+'%':'—'}</td></tr>`).join('')}</tbody></table>`;
+  }
+}
+
+async function loadUserData(){
+  const username=document.getElementById('dash-username').value.trim();
+  if(!username){alert('Please enter your seeker name.');return;}
+  document.getElementById('side-uname').textContent=username;
+  document.getElementById('user-avatar').textContent=username[0]?.toUpperCase()||'?';
+
+  const[twinRes,gamiRes,histRes]=await Promise.all([
+    fetch(`/api/digital_twin/${encodeURIComponent(username)}`).then(r=>r.json()),
+    fetch(`/api/gamification/${encodeURIComponent(username)}`).then(r=>r.json()),
+    fetch(`/api/user_history/${encodeURIComponent(username)}`).then(r=>r.json())
+  ]);
+
+  const tc=document.getElementById('twin-content');
+  if(twinRes.status==='ok'){
+    const t=twinRes.twin;
+    tc.innerHTML=`<div class="twin-grid">
+      <div class="twin-metric"><div class="twin-metric-label">Memory</div><div class="twin-metric-value">${t.pred_memory}/10</div><div class="twin-metric-sub">predicted</div></div>
+      <div class="twin-metric"><div class="twin-metric-label">Reaction</div><div class="twin-metric-value">${t.pred_reaction}ms</div><div class="twin-metric-sub">predicted</div></div>
+      <div class="twin-metric"><div class="twin-metric-label">Attention</div><div class="twin-metric-value">${t.pred_attention}%</div><div class="twin-metric-sub">predicted</div></div>
+      <div class="twin-metric"><div class="twin-metric-label">Overall</div><div class="twin-metric-value">${t.pred_overall}/100</div><div class="twin-metric-sub">predicted</div></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;margin-top:0.25rem">
+      <span class="twin-trend trend-${t.trend}">${t.trend==='improving'?'↑ Improving':t.trend==='declining'?'↓ Declining':'→ Stable'}</span>
+      <span style="font-size:0.7rem;color:var(--text-muted)">Based on ${t.sessions_used} sessions</span>
+    </div>`;
+  } else {
+    tc.innerHTML=`<div class="twin-pending">${twinRes.message}</div>`;
+  }
+
+  document.getElementById('g-streak').textContent=gamiRes.streak+' days';
+  document.getElementById('g-longest').textContent=gamiRes.longest_streak+' days';
+  document.getElementById('g-total').textContent=gamiRes.total_sessions;
+  document.getElementById('side-streak').textContent=`🔥 ${gamiRes.streak} day streak`;
+  const bg=document.getElementById('badges-grid');
+  bg.innerHTML=gamiRes.badges&&gamiRes.badges.length
+    ?gamiRes.badges.map(b=>`<div class="badge-item"><span class="badge-icon">${b.icon}</span><div><div class="badge-name">${b.name}</div><div class="badge-desc">${b.desc}</div></div></div>`).join('')
+    :'<div class="no-badges">No badges yet — complete more trials!</div>';
+
+  if(histRes.length){
+    if(trendChart)trendChart.destroy();
+    trendChart=new Chart(document.getElementById('chart-trend'),{
+      type:'line',
+      data:{labels:histRes.map((_,i)=>'S'+(i+1)),datasets:[{label:'Overall',data:histRes.map(h=>h.overall_score),borderColor:GOLD,backgroundColor:'rgba(201,168,76,0.06)',borderWidth:1.5,pointBackgroundColor:GOLD,pointRadius:3,tension:0.4,fill:true}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{min:0,max:100,grid:{color:gridColor},ticks:{color:tickColor}},x:{grid:{display:false},ticks:{color:tickColor}}}}
+    });
+    const last=histRes[histRes.length-1];
+    if(radarChart)radarChart.destroy();
+    radarChart=new Chart(document.getElementById('chart-radar'),{
+      type:'radar',
+      data:{labels:['Memory','Reaction','Attention'],datasets:[{data:[last.memory_score?(last.memory_score/10)*100:0,last.reaction_time?Math.max(0,Math.min(100,100-((last.reaction_time-150)/4))):0,last.attention_score??0],borderColor:GOLD,backgroundColor:'rgba(201,168,76,0.1)',borderWidth:1.5,pointBackgroundColor:GOLD,pointRadius:3}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{r:{min:0,max:100,grid:{color:gridColor},ticks:{display:false},pointLabels:{color:tickColor,font:{size:11}}}}}
+    });
+    const full=histRes.filter(h=>h.overall_score!==null);
+    if(full.length>=3){
+      const last3=full.slice(-3),scores=last3.map(s=>s.overall_score);
+      const dropping=scores[1]<scores[0]&&scores[2]<scores[1],drop=scores[0]-scores[2];
+      document.getElementById('fatigue-output').innerHTML=dropping&&drop>=10
+        ?`<div class="f-row"><div class="f-dot" style="background:var(--error)"></div><strong style="color:var(--error)">Mental Fatigue Detected</strong></div><div class="f-row" style="color:var(--text-muted)">Last 3 scores: <strong style="color:var(--text)">${scores[0]} → ${scores[1]} → ${scores[2]}</strong> — dropped ${drop} points. Take a break.</div>`
+        :`<div class="f-row"><div class="f-dot" style="background:var(--success)"></div><strong style="color:var(--success)">No Fatigue Detected</strong></div><div class="f-row" style="color:var(--text-muted)">Last 3 scores: <strong style="color:var(--text)">${scores.join(' → ')}</strong>. Performance is stable.</div>`;
+    } else {
+      document.getElementById('fatigue-output').innerHTML='<div class="empty">Complete at least 3 sessions to see fatigue analysis.</div>';
+    }
+  }
+}
+loadAll();
+// Auto-load logged in user's data
+window.addEventListener('load', () => {
+  const username = document.getElementById('dash-username').value.trim();
+  if (username) loadUserData();
+});
+</script>
+</body>
+</html>

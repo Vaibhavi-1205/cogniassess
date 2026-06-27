@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Register — CogniAssess</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0A0A0E;--surface:#0F0F16;--card:#14141E;--gold:#C9A84C;--gold2:#E8C76A;--gold-dim:rgba(201,168,76,0.1);--gold-border:rgba(201,168,76,0.2);--text:#EDE8DC;--text-muted:#7A7A8E;--text-dim:#2E2E3E;--border:rgba(255,255,255,0.05);--border-gold:rgba(201,168,76,0.18);--error:#f87171;--radius:10px;--radius-sm:6px;}
+body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1.5rem;position:relative;overflow:hidden}
+.bg-glow{position:fixed;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(201,168,76,0.06),transparent 60%),radial-gradient(ellipse at 100% 100%,rgba(78,205,196,0.04),transparent 50%);pointer-events:none}
+.card{background:var(--card);border:0.5px solid var(--border-gold);border-radius:var(--radius);padding:2.5rem 2rem;width:100%;max-width:420px;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:0.5}
+.logo{font-family:'Cinzel',serif;font-size:1.2rem;font-weight:700;color:var(--gold);text-align:center;letter-spacing:0.1em;margin-bottom:0.25rem}
+.logo-sub{font-size:0.65rem;color:var(--text-muted);text-align:center;letter-spacing:0.2em;text-transform:uppercase;margin-bottom:1.5rem}
+.page-title{font-family:'Cinzel',serif;font-size:1rem;font-weight:600;color:var(--text);text-align:center;letter-spacing:0.08em;margin-bottom:1.5rem}
+.divider{display:flex;align-items:center;gap:10px;margin-bottom:1.5rem}
+.div-line{flex:1;height:0.5px;background:var(--border-gold);opacity:0.5}
+.div-diamond{width:5px;height:5px;background:var(--gold);transform:rotate(45deg);opacity:0.4;flex-shrink:0}
+.form-group{margin-bottom:1rem}
+.form-label{font-size:0.65rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.1em;display:block;margin-bottom:5px}
+.form-input{width:100%;background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;font-size:0.85rem;color:var(--text);font-family:'Inter',inherit;outline:none;transition:border-color 0.15s}
+.form-input:focus{border-color:var(--gold)}
+.form-input::placeholder{color:var(--text-dim)}
+.btn{width:100%;border:none;border-radius:var(--radius-sm);padding:11px;font-size:0.8rem;font-weight:700;cursor:pointer;font-family:'Inter',inherit;letter-spacing:0.1em;text-transform:uppercase;transition:all 0.15s;margin-top:0.75rem}
+.btn-gold{background:var(--gold);color:#0A0A0E}
+.btn-gold:hover{background:var(--gold2)}
+.login-link{text-align:center;margin-top:1.25rem;font-size:0.75rem;color:var(--text-muted)}
+.login-link a{color:var(--gold);text-decoration:none}
+.alert-error{background:rgba(248,113,113,0.08);border:0.5px solid rgba(248,113,113,0.2);color:var(--error);border-radius:var(--radius-sm);padding:10px 14px;font-size:0.8rem;margin-bottom:1rem;text-align:center}
+</style>
+</head>
+<body>
+<div class="bg-glow"></div>
+<div class="card">
+  <div class="logo">CogniAssess</div>
+  <div class="logo-sub">Arcane Intelligence</div>
+  <div class="divider"><div class="div-line"></div><div class="div-diamond"></div><div class="div-line"></div></div>
+  <div class="page-title">Begin Your Ascension</div>
+  {% if error %}<div class="alert-error">{{ error }}</div>{% endif %}
+  <form method="POST">
+    <div class="form-group">
+      <label class="form-label">Username</label>
+      <input class="form-input" type="text" name="username" placeholder="Choose your seeker name" required/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input class="form-input" type="email" name="email" placeholder="your@email.com" required/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input class="form-input" type="password" name="password" placeholder="Minimum 6 characters" required minlength="6"/>
+    </div>
+    <button class="btn btn-gold" type="submit">Create Account →</button>
+  </form>
+  <div class="login-link">Already have an account? <a href="/login">Login</a></div>
+</div>
+</body>
+</html>

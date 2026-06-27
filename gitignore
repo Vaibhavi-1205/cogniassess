@@ -1,0 +1,11 @@
+.env
+database.db
+__pycache__/
+*.pyc
+*.pyo
+static/uploads/
+.venv/
+.venv-2/
+.venv-3/
+*.db
+instance/

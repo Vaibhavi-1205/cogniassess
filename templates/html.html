@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CogniAssess</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0A0A0E;--surface:#0F0F16;--card:#14141E;--card2:#1A1A28;
+  --gold:#C9A84C;--gold2:#E8C76A;--gold-dim:rgba(201,168,76,0.1);--gold-border:rgba(201,168,76,0.2);
+  --teal:#4ECDC4;--purple:#8B5CF6;
+  --text:#EDE8DC;--text-muted:#7A7A8E;--text-dim:#2E2E3E;
+  --border:rgba(255,255,255,0.05);--border-gold:rgba(201,168,76,0.18);
+  --success:#4ade80;--error:#f87171;
+  --success-dim:rgba(74,222,128,0.08);--error-dim:rgba(248,113,113,0.08);
+  --radius:10px;--radius-sm:6px;
+}
+body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh;display:flex;flex-direction:column}
+
+/* HEADER */
+header{background:rgba(10,10,14,0.95);border-bottom:0.5px solid var(--border);backdrop-filter:blur(12px);position:sticky;top:0;z-index:100}
+.header-inner{max-width:1200px;margin:0 auto;padding:0 1.5rem;height:56px;display:flex;align-items:center;gap:2rem}
+.logo{font-family:'Cinzel',serif;font-size:1.1rem;font-weight:700;color:var(--gold);letter-spacing:0.1em;flex-shrink:0}
+.header-nav{display:flex;gap:0.5rem;margin-left:auto}
+.h-nav-item{font-size:0.78rem;color:var(--text-muted);text-decoration:none;padding:5px 14px;border-radius:var(--radius-sm);letter-spacing:0.04em;transition:color 0.15s}
+.h-nav-item:hover{color:var(--gold)}
+.h-nav-item.active{color:var(--text);border-bottom:1.5px solid var(--gold)}
+
+/* LAYOUT */
+.app{display:flex;max-width:1200px;margin:0 auto;width:100%;min-height:calc(100vh - 56px)}
+
+/* SIDEBAR */
+.sidebar{width:220px;flex-shrink:0;border-right:0.5px solid var(--border);padding:1.5rem 0.75rem;display:flex;flex-direction:column;gap:2px;position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto}
+.sidebar-section{font-size:0.6rem;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-dim);padding:0 0.75rem;margin:1rem 0 0.4rem}
+.s-item{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:var(--radius-sm);font-size:0.8rem;color:var(--text-muted);cursor:pointer;text-decoration:none;transition:all 0.15s;letter-spacing:0.02em}
+.s-item:hover{background:var(--card);color:var(--text)}
+.s-item.active{background:var(--gold-dim);color:var(--gold);border:0.5px solid var(--gold-border)}
+.s-icon{font-size:0.95rem;width:20px;text-align:center;flex-shrink:0}
+.sidebar-divider{height:0.5px;background:var(--border);margin:0.75rem 0}
+.sidebar-user{margin-top:auto;background:var(--card);border:0.5px solid var(--border);border-radius:var(--radius);padding:1rem;display:flex;align-items:center;gap:10px}
+.user-avatar{width:36px;height:36px;border-radius:50%;background:var(--gold-dim);border:1.5px solid var(--gold-border);display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:600;color:var(--gold);font-family:'Cinzel',serif;flex-shrink:0}
+.user-name{font-size:0.8rem;font-weight:500;color:var(--text)}
+.user-rank{font-size:0.65rem;color:var(--text-muted);margin-top:1px}
+
+/* MAIN */
+main{flex:1;padding:1.75rem;display:flex;flex-direction:column;gap:1.25rem;min-width:0;overflow:hidden}
+
+/* HERO BANNER */
+.hero{background:var(--card);border:0.5px solid var(--border-gold);border-radius:var(--radius);padding:2.25rem 2rem;position:relative;overflow:hidden;text-align:center}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 50% -20%,rgba(201,168,76,0.12) 0%,transparent 65%),radial-gradient(ellipse at 0% 100%,rgba(139,92,246,0.06) 0%,transparent 50%),radial-gradient(ellipse at 100% 100%,rgba(78,205,196,0.06) 0%,transparent 50%);pointer-events:none}
+.hero-ornament{font-family:'Cinzel',serif;font-size:0.65rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);opacity:0.7;margin-bottom:0.75rem}
+.hero h1{font-family:'Cinzel',serif;font-size:1.9rem;font-weight:700;letter-spacing:0.02em;line-height:1.2;color:var(--text)}
+.hero h1 span{color:var(--gold)}
+.hero-divider{display:flex;align-items:center;gap:12px;margin:1rem auto;max-width:200px}
+.hero-divider-line{flex:1;height:0.5px;background:var(--gold-border)}
+.hero-divider-diamond{width:6px;height:6px;background:var(--gold);transform:rotate(45deg);opacity:0.6;flex-shrink:0}
+.hero p{color:var(--text-muted);font-size:0.85rem;line-height:1.7;max-width:460px;margin:0 auto}
+
+/* USERNAME BAR */
+.ubar{display:flex;align-items:center;gap:0.75rem;background:var(--card);border:0.5px solid var(--border);border-radius:var(--radius);padding:0.85rem 1.25rem}
+.ubar label{font-size:0.72rem;font-weight:500;color:var(--text-muted);white-space:nowrap;letter-spacing:0.06em;text-transform:uppercase}
+.ubar input{flex:1;background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:7px 12px;font-size:0.85rem;color:var(--text);font-family:'Inter',inherit;outline:none;transition:border-color 0.15s}
+.ubar input:focus{border-color:var(--gold)}
+.ubar input::placeholder{color:var(--text-dim)}
+
+/* STATS ROW */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem}
+.stat-card{background:var(--card);border:0.5px solid var(--border);border-radius:var(--radius);padding:1rem 1.25rem;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1.5px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:0.4}
+.stat-label{font-size:0.62rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:6px}
+.stat-value{font-size:1.75rem;font-weight:600;color:var(--gold);font-family:'Cinzel',serif}
+.stat-value.pending{color:var(--text-dim)}
+.stat-sub{font-size:0.68rem;color:var(--text-muted);margin-top:3px}
+
+/* SECTION HEADER */
+.sec-head{display:flex;align-items:center;gap:14px;margin-bottom:0.1rem}
+.sec-title{font-family:'Cinzel',serif;font-size:0.72rem;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);white-space:nowrap}
+.sec-line{flex:1;height:0.5px;background:linear-gradient(90deg,var(--gold-border),transparent)}
+.sec-diamond{width:5px;height:5px;background:var(--gold);transform:rotate(45deg);opacity:0.5;flex-shrink:0}
+
+/* TEST CARDS */
+.tests-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.875rem}
+.test-card{background:var(--card);border:0.5px solid var(--border);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;transition:border-color 0.2s}
+.test-card:hover{border-color:var(--gold-border)}
+.test-card-art{height:130px;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.art-memory{background:linear-gradient(135deg,#1A0A2E 0%,#2D1B4E 40%,#1A0A2E 100%)}
+.art-reaction{background:linear-gradient(135deg,#0A1A2E 0%,#0D2E3A 40%,#0A1A2E 100%)}
+.art-attention{background:linear-gradient(135deg,#1A2E0A 0%,#2E4A1A 40%,#1A2E0A 100%)}
+.art-icon{font-size:3rem;opacity:0.9;position:relative;z-index:1}
+.art-glow{position:absolute;width:80px;height:80px;border-radius:50%;filter:blur(30px);opacity:0.4}
+.art-tag{position:absolute;top:10px;right:10px;font-size:0.6rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:3px 10px;border-radius:20px;border:0.5px solid}
+.tag-memory{background:rgba(139,92,246,0.15);color:#A78BFA;border-color:rgba(139,92,246,0.3)}
+.tag-reaction{background:rgba(78,205,196,0.12);color:var(--teal);border-color:rgba(78,205,196,0.25)}
+.tag-attention{background:var(--gold-dim);color:var(--gold);border-color:var(--gold-border)}
+.test-body{padding:1rem;display:flex;flex-direction:column;gap:0.75rem;flex:1}
+.test-name{font-family:'Cinzel',serif;font-size:0.95rem;font-weight:600;color:var(--text)}
+.test-diff{font-size:0.62rem;color:var(--text-muted);letter-spacing:0.08em;text-transform:uppercase;margin-top:2px}
+.test-desc{font-size:0.75rem;color:var(--text-muted);line-height:1.6}
+.game-area{min-height:110px;border-radius:var(--radius-sm);border:0.5px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.5rem;padding:0.875rem;background:var(--surface);text-align:center}
+.game-idle{color:var(--text-dim);font-size:0.78rem;letter-spacing:0.04em}
+.sequence-display{font-size:2.2rem;font-weight:700;letter-spacing:0.18em;color:var(--gold);min-height:48px;font-family:'Cinzel',serif}
+.number-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;width:100%}
+.num-btn{background:var(--card2);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:9px;color:var(--text);font-size:0.9rem;font-weight:500;cursor:pointer;transition:all 0.12s;font-family:inherit}
+.num-btn:hover{background:var(--gold-dim);border-color:var(--gold-border);color:var(--gold)}
+.reaction-box{width:100%;min-height:100px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:0.82rem;font-weight:600;user-select:none;transition:all 0.1s;letter-spacing:0.08em;text-transform:uppercase}
+.reaction-wait{background:var(--error-dim);color:var(--error);border:0.5px solid rgba(248,113,113,0.15)}
+.reaction-ready{background:var(--success-dim);color:var(--success);border:0.5px solid rgba(74,222,128,0.2)}
+.reaction-result{background:var(--gold-dim);color:var(--gold);border:0.5px solid var(--gold-border);font-size:1.4rem;font-weight:700;font-family:'Cinzel',serif}
+.attention-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;width:100%}
+.attn-cell{aspect-ratio:1;border-radius:4px;background:var(--card2);border:0.5px solid var(--border);cursor:pointer;transition:background 0.1s}
+.attn-cell.target{background:var(--gold);border-color:var(--gold2)}
+.attn-cell.correct{background:var(--success-dim);border-color:rgba(74,222,128,0.25)}
+.attn-cell.wrong{background:var(--error-dim);border-color:rgba(248,113,113,0.2)}
+
+/* BUTTONS */
+.btn{border:none;border-radius:var(--radius-sm);padding:0.58rem 1rem;font-size:0.75rem;font-weight:600;cursor:pointer;transition:all 0.15s;width:100%;font-family:'Inter',inherit;letter-spacing:0.08em;text-transform:uppercase}
+.btn:active{transform:scale(0.97)}
+.btn-gold{background:var(--gold);color:#0A0A0E}
+.btn-gold:hover{background:var(--gold2)}
+.btn-outline{background:transparent;color:var(--gold);border:0.5px solid var(--gold-border)}
+.btn-outline:hover{background:var(--gold-dim)}
+.btn:disabled{opacity:0.3;cursor:not-allowed}
+.status-text{font-size:0.68rem;color:var(--text-muted);text-align:center;min-height:15px;letter-spacing:0.06em}
+
+/* MEMORY TYPED */
+#memory-typed{font-size:1rem;font-weight:600;color:var(--gold);text-align:center;min-height:24px;letter-spacing:0.18em;font-family:'Cinzel',serif}
+
+/* PROFILE */
+.profile-card{background:var(--card);border:0.5px solid var(--border-gold);border-radius:var(--radius);padding:1.5rem;position:relative;overflow:hidden}
+.profile-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 100% 0%,rgba(201,168,76,0.06),transparent 60%);pointer-events:none}
+.profile-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem;margin-bottom:1rem}
+.profile-metric{background:var(--surface);border-radius:var(--radius-sm);border:0.5px solid var(--border);padding:1rem;text-align:center}
+.metric-name{font-size:0.62rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.12em}
+.metric-rating{font-size:0.88rem;font-weight:600;margin-top:6px;font-family:'Cinzel',serif}
+.rating-excellent{color:var(--success)}
+.rating-good{color:var(--gold)}
+.rating-average{color:#f59e0b}
+.rating-poor{color:var(--error)}
+.rating-pending{color:var(--text-dim)}
+.overall-score{background:var(--surface);border:0.5px solid var(--border-gold);border-radius:var(--radius-sm);padding:1.1rem 1.5rem;display:flex;align-items:center;justify-content:space-between}
+.overall-label{font-size:0.78rem;color:var(--text-muted);letter-spacing:0.04em}
+.overall-sub{font-size:0.65rem;color:var(--text-dim);margin-top:2px}
+.overall-value{font-size:2.2rem;font-weight:700;color:var(--gold);font-family:'Cinzel',serif}
+
+/* AI INSIGHT */
+.insight-card{background:var(--card);border:0.5px solid var(--border-gold);border-radius:var(--radius);padding:1.5rem;display:none;position:relative;overflow:hidden}
+.insight-card.show{display:block}
+.insight-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 0% 100%,rgba(78,205,196,0.05),transparent 60%);pointer-events:none}
+.insight-header{display:flex;align-items:center;gap:8px;margin-bottom:1rem}
+.insight-title{font-family:'Cinzel',serif;font-size:0.78rem;font-weight:600;color:var(--text);letter-spacing:0.1em;text-transform:uppercase}
+.insight-badge{font-size:0.6rem;font-weight:600;padding:3px 9px;border-radius:20px;background:rgba(78,205,196,0.08);color:var(--teal);border:0.5px solid rgba(78,205,196,0.18);margin-left:auto;letter-spacing:0.08em;text-transform:uppercase}
+.insight-text{font-size:0.83rem;color:var(--text-muted);line-height:1.8;font-style:italic;border-left:1.5px solid var(--gold-border);padding-left:1rem}
+.insight-loading{display:flex;align-items:center;gap:8px;font-size:0.8rem;color:var(--text-muted)}
+.spinner{width:13px;height:13px;border:1.5px solid var(--text-dim);border-top-color:var(--gold);border-radius:50%;animation:spin 0.7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* SAVE BANNER */
+.save-banner{background:var(--success-dim);border:0.5px solid rgba(74,222,128,0.15);border-radius:var(--radius);padding:0.875rem 1.25rem;display:none;align-items:center;justify-content:space-between;gap:1rem}
+.save-banner.show{display:flex}
+.save-banner p{font-size:0.8rem;color:var(--success);font-weight:500}
+.save-banner a{font-size:0.75rem;color:var(--gold);text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
+
+/* HISTORY */
+.history-card{background:var(--card);border:0.5px solid var(--border);border-radius:var(--radius);padding:1.25rem}
+.history-list{display:flex;flex-direction:column;gap:0.35rem;margin-top:0.875rem}
+.history-row{display:flex;justify-content:space-between;align-items:center;font-size:0.77rem;padding:0.5rem 0.75rem;background:var(--surface);border-radius:var(--radius-sm);border:0.5px solid var(--border)}
+.history-test{color:var(--text-muted)}
+.history-score{font-weight:600;color:var(--gold);font-family:'Cinzel',serif}
+.empty-history{color:var(--text-dim);font-size:0.78rem;text-align:center;padding:1rem 0;font-style:italic}
+
+@media(max-width:800px){.sidebar{display:none}.tests-grid{grid-template-columns:1fr}.stats-row{grid-template-columns:1fr 1fr}.main{padding:1rem}}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-inner">
+    <div class="logo">CogniAssess</div>
+    <nav class="header-nav">
+      <a class="h-nav-item active" href="/">Home</a>
+      <a class="h-nav-item" href="/dashboard">Dashboard</a>
+    </nav>
+  </div>
+</header>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="sidebar-section">Navigation</div>
+    <a class="s-item active" href="/"><span class="s-icon">🏠</span>Home</a>
+    <a class="s-item" href="/dashboard"><span class="s-icon">📊</span>Dashboard</a>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">Modules</div>
+    <a class="s-item" href="/dashboard"><span class="s-icon">🧬</span>Digital Twin</a>
+    <a class="s-item" href="/dashboard"><span class="s-icon">🏆</span>Leaderboard</a>
+    <a class="s-item" href="/dashboard"><span class="s-icon">🎖️</span>Achievements</a>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-user">
+      <div class="user-avatar" id="user-avatar">?</div>
+      <div>
+        <div class="user-name" id="side-username">Seeker</div>
+        <div class="user-rank">Cognitive Apprentice</div>
+      </div>
+    </div>
+  </aside>
+
+  <main>
+    <div class="hero">
+      <div class="hero-bg"></div>
+      <div class="hero-ornament">◆ Neural Sync Quest ◆</div>
+      <h1>Measure Your <span>Cognitive Power</span></h1>
+      <div class="hero-divider"><div class="hero-divider-line"></div><div class="hero-divider-diamond"></div><div class="hero-divider-line"></div></div>
+      <p>Complete all three arcane trials to generate your cognitive profile and receive an AI-powered performance analysis.</p>
+    </div>
+
+    <div class="ubar">
+      <label>Seeker Name</label>
+      <input id="username-input" type="text" placeholder="Enter your name to begin your quest" maxlength="40" oninput="updateSidebar(this.value)"/>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Memory</div>
+        <div class="stat-value pending" id="stat-memory">—</div>
+        <div class="stat-sub">out of 10</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Reaction Time</div>
+        <div class="stat-value pending" id="stat-reaction">—</div>
+        <div class="stat-sub">milliseconds</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Attention</div>
+        <div class="stat-value pending" id="stat-attention">—</div>
+        <div class="stat-sub">accuracy %</div>
+      </div>
+    </div>
+
+    <div class="sec-head"><div class="sec-title">Arcane Trials</div><div class="sec-diamond"></div><div class="sec-line"></div></div>
+
+    <div class="tests-grid">
+      <!-- MEMORY -->
+      <div class="test-card">
+        <div class="test-card-art art-memory">
+          <div class="art-glow" style="background:#8B5CF6"></div>
+          <div class="art-icon">🧠</div>
+          <div class="art-tag tag-memory">Memory</div>
+        </div>
+        <div class="test-body">
+          <div>
+            <div class="test-name">Echo Recall</div>
+            <div class="test-diff">Adaptive Difficulty</div>
+          </div>
+          <div class="test-desc">Observe the arcane sequence and mirror it back before the echoes fade into the void.</div>
+          <div class="game-area" id="memory-area"><div class="game-idle">Press Begin Trial to start</div></div>
+          <div id="memory-input-area" style="display:none;">
+            <div class="number-grid" id="number-grid"></div>
+            <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:5px">
+              <div id="memory-typed"></div>
+              <button id="undo-btn" onclick="undoMemory()" style="display:none;background:var(--error-dim);color:var(--error);border:0.5px solid rgba(248,113,113,0.2);border-radius:var(--radius-sm);padding:3px 9px;font-size:0.68rem;font-weight:600;cursor:pointer;font-family:inherit;letter-spacing:0.06em">⌫ Undo</button>
+            </div>
+          </div>
+          <div class="status-text" id="memory-status">Round 1 of 5 · Level 1</div>
+          <button class="btn btn-gold" id="memory-btn" onclick="startMemory()">Begin Trial →</button>
+        </div>
+      </div>
+
+      <!-- REACTION -->
+      <div class="test-card">
+        <div class="test-card-art art-reaction">
+          <div class="art-glow" style="background:#4ECDC4"></div>
+          <div class="art-icon">⚡</div>
+          <div class="art-tag tag-reaction">Agility</div>
+        </div>
+        <div class="test-body">
+          <div>
+            <div class="test-name">Reflex Strike</div>
+            <div class="test-diff">5 Rounds · Speed Test</div>
+          </div>
+          <div class="test-desc">Vanquish the manifestation the instant it appears. Speed is your only salvation.</div>
+          <div class="reaction-box reaction-wait" id="reaction-box" onclick="handleReactionClick()">Click to begin</div>
+          <div class="status-text" id="reaction-status">5 rounds · Strike when green</div>
+          <button class="btn btn-outline" id="reaction-btn" onclick="startReaction()">Begin Trial →</button>
+        </div>
+      </div>
+
+      <!-- ATTENTION -->
+      <div class="test-card">
+        <div class="test-card-art art-attention">
+          <div class="art-glow" style="background:#C9A84C"></div>
+          <div class="art-icon">🎯</div>
+          <div class="art-tag tag-attention">Focus</div>
+        </div>
+        <div class="test-body">
+          <div>
+            <div class="test-name">Focus Siphon</div>
+            <div class="test-diff">10 Rounds · Attention</div>
+          </div>
+          <div class="test-desc">Calm the internal storm. Locate the golden sigil amid the distractions.</div>
+          <div class="game-area" id="attention-area">
+            <div class="attention-grid" id="attention-grid" style="display:none;"></div>
+            <div class="game-idle" id="attention-idle">Press Begin Trial to start</div>
+          </div>
+          <div class="status-text" id="attention-status">10 rounds · Find the gold target</div>
+          <button class="btn btn-gold" id="attention-btn" onclick="startAttention()">Begin Trial →</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="save-banner" id="save-banner">
+      <p id="save-msg">✦ Score recorded in the grimoire.</p>
+      <a href="/dashboard">View Dashboard →</a>
+    </div>
+
+    <div class="insight-card" id="insight-card">
+      <div class="insight-header">
+        <span style="color:var(--gold);font-size:1rem">✦</span>
+        <span class="insight-title">AI Cognitive Insight</span>
+        <span class="insight-badge">Llama 3.3 · Groq</span>
+      </div>
+      <div class="insight-text" id="insight-text">
+        <div class="insight-loading"><div class="spinner"></div>Communing with the oracle…</div>
+      </div>
+    </div>
+
+    <div class="sec-head"><div class="sec-title">Cognitive Profile</div><div class="sec-diamond"></div><div class="sec-line"></div></div>
+    <div class="profile-card">
+      <div class="profile-grid">
+        <div class="profile-metric"><div class="metric-name">Memory</div><div class="metric-rating rating-pending" id="profile-memory">Pending</div></div>
+        <div class="profile-metric"><div class="metric-name">Reaction Speed</div><div class="metric-rating rating-pending" id="profile-reaction">Pending</div></div>
+        <div class="profile-metric"><div class="metric-name">Attention</div><div class="metric-rating rating-pending" id="profile-attention">Pending</div></div>
+      </div>
+      <div class="overall-score">
+        <div><div class="overall-label">Overall Cognitive Score</div><div class="overall-sub">Complete all trials to unlock</div></div>
+        <div class="overall-value" id="overall-score">—</div>
+      </div>
+    </div>
+
+    <div class="sec-head"><div class="sec-title">Session History</div><div class="sec-diamond"></div><div class="sec-line"></div></div>
+    <div class="history-card">
+      <div class="history-list" id="history-list">
+        <div class="empty-history">No results yet. Complete a trial above.</div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+const state={
+  memory:{score:null,round:1,level:1,sequence:[],typed:[],phase:'idle'},
+  reaction:{score:null,times:[],round:0,phase:'idle',startTime:null,timer:null},
+  attention:{score:null,correct:0,round:0,phase:'idle'}
+};
+const sessionHistory=[];
+
+function updateSidebar(val){
+  const name=val||'Seeker';
+  document.getElementById('side-username').textContent=name;
+  document.getElementById('user-avatar').textContent=name[0]?.toUpperCase()||'?';
+}
+function getUsername(){return document.getElementById('username-input').value.trim()||'Anonymous';}
+function getRating(type,value){
+  if(type==='memory'){if(value>=9)return['Excellent','excellent'];if(value>=7)return['Good','good'];if(value>=5)return['Average','average'];return['Needs Work','poor'];}
+  if(type==='reaction'){if(value<200)return['Excellent','excellent'];if(value<280)return['Good','good'];if(value<380)return['Average','average'];return['Slow','poor'];}
+  if(type==='attention'){if(value>=90)return['Excellent','excellent'];if(value>=75)return['Good','good'];if(value>=55)return['Average','average'];return['Needs Work','poor'];}
+}
+function setStatValue(id,value,suffix){const el=document.getElementById(id);el.textContent=value+(suffix||'');el.classList.remove('pending');}
+function addHistory(test,display){
+  sessionHistory.unshift({test,display});
+  document.getElementById('history-list').innerHTML=sessionHistory.slice(0,10).map(h=>`<div class="history-row"><span class="history-test">${h.test}</span><span class="history-score">${h.display}</span></div>`).join('');
+}
+function updateProfile(){
+  const m=state.memory.score,r=state.reaction.score,a=state.attention.score;
+  if(m!==null){const[l,c]=getRating('memory',m);const el=document.getElementById('profile-memory');el.textContent=l;el.className=`metric-rating rating-${c}`;}
+  if(r!==null){const[l,c]=getRating('reaction',r);const el=document.getElementById('profile-reaction');el.textContent=l;el.className=`metric-rating rating-${c}`;}
+  if(a!==null){const[l,c]=getRating('attention',a);const el=document.getElementById('profile-attention');el.textContent=l;el.className=`metric-rating rating-${c}`;}
+  if(m!==null&&r!==null&&a!==null){
+    const ms=(m/10)*100,rs=Math.max(0,Math.min(100,100-((r-150)/4)));
+    const overall=Math.round((ms+rs+a)/3);
+    document.getElementById('overall-score').textContent=overall+'/100';
+    saveAndAnalyse(m,r,a,overall);
+  }
+}
+async function saveAndAnalyse(memory,reaction,attention,overall){
+  const username=getUsername();let scoreId=null;
+  try{
+    const res=await fetch('/api/save_score',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username,memory_score:memory,reaction_time:reaction,attention_score:attention})});
+    const data=await res.json();scoreId=data.score_id;
+    document.getElementById('save-msg').textContent=`✦ Score recorded for "${username}" — overall: ${data.overall_score}/100`;
+    document.getElementById('save-banner').classList.add('show');
+  }catch(e){console.log('Save failed:',e);}
+  const ic=document.getElementById('insight-card');ic.classList.add('show');ic.scrollIntoView({behavior:'smooth',block:'nearest'});
+  try{
+    const res=await fetch('/api/ai_insight',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username,memory_score:memory,reaction_time:reaction,attention_score:attention,overall_score:overall,score_id:scoreId})});
+    const data=await res.json();
+    document.getElementById('insight-text').textContent=data.insight;
+  }catch(e){document.getElementById('insight-text').textContent='Could not generate insight.';}
+}
+function startMemory(){const s=state.memory;s.round=1;s.level=1;s.score=null;document.getElementById('memory-btn').disabled=true;nextMemoryRound();}
+function nextMemoryRound(){
+  const s=state.memory;const len=2+s.level;
+  s.sequence=Array.from({length:len},()=>Math.floor(Math.random()*9)+1);s.typed=[];s.phase='showing';
+  document.getElementById('memory-input-area').style.display='none';
+  document.getElementById('memory-status').textContent=`Round ${s.round} of 5 · Level ${s.level} (${len} digits)`;
+  const area=document.getElementById('memory-area');area.innerHTML='<div class="sequence-display" id="seq-display">Get ready…</div>';
+  let i=0;const show=()=>{if(i<s.sequence.length){document.getElementById('seq-display').textContent=s.sequence[i];i++;setTimeout(show,700);}else{document.getElementById('seq-display').textContent='?';setTimeout(showMemoryInput,400);}};
+  setTimeout(show,600);
+}
+function showMemoryInput(){
+  const s=state.memory;s.phase='input';
+  document.getElementById('memory-area').innerHTML='<div style="font-size:0.75rem;color:var(--text-muted);letter-spacing:0.06em">Enter the sequence you saw</div>';
+  document.getElementById('number-grid').innerHTML=[1,2,3,4,5,6,7,8,9].map(n=>`<button class="num-btn" onclick="memoryInput(${n})">${n}</button>`).join('');
+  document.getElementById('memory-typed').textContent='';
+  document.getElementById('undo-btn').style.display='none';
+  document.getElementById('memory-input-area').style.display='block';
+}
+function undoMemory(){
+  const s=state.memory;if(s.phase!=='input'||s.typed.length===0)return;
+  s.typed.pop();document.getElementById('memory-typed').textContent=s.typed.join(' · ');
+  document.getElementById('undo-btn').style.display=s.typed.length>0?'block':'none';
+}
+function memoryInput(n){
+  const s=state.memory;if(s.phase!=='input')return;
+  s.typed.push(n);document.getElementById('memory-typed').textContent=s.typed.join(' · ');
+  document.getElementById('undo-btn').style.display='block';
+  if(s.typed.length===s.sequence.length){
+    s.phase='checking';const correct=s.typed.every((v,i)=>v===s.sequence[i]);
+    document.getElementById('memory-input-area').style.display='none';
+    if(correct){s.level=Math.min(s.level+1,8);document.getElementById('memory-area').innerHTML='<div style="color:var(--success);font-size:0.85rem;font-weight:600;letter-spacing:0.06em">✓ Correct — Level Up!</div>';}
+    else{s.level=Math.max(s.level-1,1);document.getElementById('memory-area').innerHTML=`<div style="color:var(--error);font-size:0.85rem;font-weight:600">✗ Incorrect · Was: ${s.sequence.join(' ')}</div>`;}
+    s.round++;
+    if(s.round<=5){setTimeout(nextMemoryRound,1400);}
+    else{
+      const fs=Math.min(10,Math.round(s.level*1.25));s.score=fs;setStatValue('stat-memory',fs,'/10');
+      addHistory('Echo Recall',fs+'/10');updateProfile();
+      document.getElementById('memory-status').textContent=`Complete · Score: ${fs}/10`;
+      document.getElementById('memory-btn').disabled=false;document.getElementById('memory-btn').textContent='Retake Trial →';
+    }
+  }
+}
+function startReaction(){const s=state.reaction;s.times=[];s.round=0;s.phase='waiting';document.getElementById('reaction-btn').disabled=true;scheduleGreen();}
+function scheduleGreen(){
+  const s=state.reaction,box=document.getElementById('reaction-box');
+  box.className='reaction-box reaction-wait';box.textContent='Wait for the signal…';s.phase='waiting';
+  s.timer=setTimeout(()=>{box.className='reaction-box reaction-ready';box.textContent='STRIKE NOW!';s.startTime=performance.now();s.phase='ready';},1500+Math.random()*2500);
+}
+function handleReactionClick(){
+  const s=state.reaction,box=document.getElementById('reaction-box');
+  if(s.phase==='idle')return;
+  if(s.phase==='waiting'){clearTimeout(s.timer);box.className='reaction-box reaction-wait';box.textContent='Too early — wait for green!';setTimeout(scheduleGreen,1200);return;}
+  if(s.phase==='ready'){
+    const rt=Math.round(performance.now()-s.startTime);s.times.push(rt);s.round++;
+    box.className='reaction-box reaction-result';box.textContent=rt+' ms';
+    document.getElementById('reaction-status').textContent=`Round ${s.round} of 5 · ${rt} ms`;
+    if(s.round<5){s.phase='result';setTimeout(scheduleGreen,1000);}
+    else{
+      const avg=Math.round(s.times.reduce((a,b)=>a+b,0)/s.times.length);s.score=avg;
+      setStatValue('stat-reaction',avg,' ms');addHistory('Reflex Strike',avg+' ms');updateProfile();
+      document.getElementById('reaction-status').textContent=`Complete · Average: ${avg} ms`;
+      box.textContent=`Done — avg ${avg} ms`;
+      document.getElementById('reaction-btn').disabled=false;document.getElementById('reaction-btn').textContent='Retake Trial →';s.phase='idle';
+    }
+  }
+}
+function startAttention(){const s=state.attention;s.correct=0;s.round=0;s.phase='running';document.getElementById('attention-btn').disabled=true;document.getElementById('attention-idle').style.display='none';document.getElementById('attention-grid').style.display='grid';nextAttentionRound();}
+function nextAttentionRound(){
+  const s=state.attention;
+  if(s.round>=10){
+    const pct=Math.round((s.correct/10)*100);s.score=pct;setStatValue('stat-attention',pct,'%');
+    addHistory('Focus Siphon',pct+'%');updateProfile();
+    document.getElementById('attention-status').textContent=`Complete · Accuracy: ${pct}%`;
+    document.getElementById('attention-grid').style.display='none';document.getElementById('attention-idle').style.display='block';
+    document.getElementById('attention-idle').textContent=`Done — accuracy ${pct}%`;
+    document.getElementById('attention-btn').disabled=false;document.getElementById('attention-btn').textContent='Retake Trial →';s.phase='idle';return;
+  }
+  s.round++;const target=Math.floor(Math.random()*25);
+  const grid=document.getElementById('attention-grid');grid.innerHTML='';
+  document.getElementById('attention-status').textContent=`Round ${s.round} of 10 · Find the gold sigil`;
+  for(let i=0;i<25;i++){const cell=document.createElement('div');cell.className=i===target?'attn-cell target':'attn-cell';cell.onclick=()=>handleAttentionClick(cell,i===target);grid.appendChild(cell);}
+}
+function handleAttentionClick(cell,isTarget){
+  const s=state.attention;if(s.phase!=='running')return;
+  document.querySelectorAll('.attn-cell').forEach(c=>c.onclick=null);
+  cell.className=isTarget?'attn-cell correct':'attn-cell wrong';if(isTarget)s.correct++;
+  setTimeout(nextAttentionRound,550);
+}
+</script>
+</body>
+</html>
