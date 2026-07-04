@@ -1,8 +1,8 @@
-# CogniAssess — AI-Powered Digital Twin Cognitive Assessment Platform
+# Cognify — AI-Powered Digital Twin Cognitive Assessment Platform
 
 A full-stack web application that measures cognitive performance through interactive tests and generates AI-powered insights using Llama 3.3 via Groq API.
 
-![CogniAssess](https://img.shields.io/badge/Flask-Python-blue) ![AI](https://img.shields.io/badge/AI-Llama%203.3-green) ![Status](https://img.shields.io/badge/Status-Live-brightgreen)
+![Cognify](https://img.shields.io/badge/Flask-Python-blue) ![AI](https://img.shields.io/badge/AI-Llama%203.3-green) ![Status](https://img.shields.io/badge/Status-Live-brightgreen)
 
 ## Features
 
@@ -29,8 +29,8 @@ A full-stack web application that measures cognitive performance through interac
 
 ```bash
 # Clone the repo
-git clone https://github.com/yourusername/cogniassess.git
-cd cogniassess
+git clone https://github.com/yourusername/cognify.git
+cd cognify
 
 # Install dependencies
 pip install -r requirements.txt
@@ -48,7 +48,7 @@ Open `http://127.0.0.1:5000` in your browser.
 ## Project Structure
 
 ```
-cogniassess/
+cognify/
 ├── app.py              # Flask backend — routes, API, logic
 ├── requirements.txt    # Python dependencies
 ├── Procfile            # Render deployment config
@@ -64,7 +64,7 @@ cogniassess/
 
 ## Live Demo
 
-[cogniassess.onrender.com](https://cogniassess.onrender.com)
+[cognify.onrender.com](https://cognify.onrender.com)
 
 ---
 Built as a placement project demonstrating full-stack development, AI/ML integration, and data analytics.

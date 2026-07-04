@@ -14,7 +14,7 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app)
 bcrypt = Bcrypt(app)
-app.secret_key = os.getenv('SECRET_KEY', 'cogniassess_secret_2024')
+app.secret_key = os.getenv('SECRET_KEY', 'cognify_secret_2024')
 
 DB = 'database.db'
 UPLOAD_FOLDER = 'static/uploads'
